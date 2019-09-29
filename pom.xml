@@ -6,7 +6,7 @@
 
   <groupId>com.github.juchar</groupId>
   <artifactId>color-picker-flow</artifactId>
-  <version>1.0.0</version>
+  <version>2.0.0-SNAPSHOT</version>
   <name>Color Picker Flow</name>
   <description>Color Picker Flow</description>
 
@@ -21,43 +21,46 @@
       <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
     </license>
   </licenses>
-
   <properties>
+    <vaadin.version>14.0.6</vaadin.version>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <vaadin.version>13.0.0</vaadin.version>
   </properties>
-
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>com.vaadin</groupId>
+        <artifactId>vaadin-bom</artifactId>
+        <type>pom</type>
+        <scope>import</scope>
+        <version>${vaadin.version}</version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
   <repositories>
     <repository>
       <id>Vaadin Directory</id>
       <url>http://maven.vaadin.com/vaadin-addons</url>
     </repository>
+    <!-- Repository needed for prerelease versions of Vaadin -->
+    <repository>
+      <id>Vaadin prereleases</id>
+      <url>http://maven.vaadin.com/vaadin-prereleases</url>
+    </repository>
+    <!-- The bintray repository contain webjars immediately after generation. If the webjar is available
+         in Maven central, you do not need this repository -->
+    <repository>
+      <id>webjars</id>
+      <url>https://dl.bintray.com/webjars/maven</url>
+    </repository>
   </repositories>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <artifactId>vaadin-bom</artifactId>
-        <groupId>com.vaadin</groupId>
-        <scope>import</scope>
-        <type>pom</type>
-        <version>${vaadin.version}</version>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
   <dependencies>
     <dependency>
-      <artifactId>vaadin-core</artifactId>
       <groupId>com.vaadin</groupId>
-    </dependency>
-    <dependency>
-      <artifactId>color-picker</artifactId>
-      <groupId>org.webjars.bowergithub.juchar</groupId>
-      <version>0.9.0</version>
+      <artifactId>vaadin-core</artifactId>
     </dependency>
     <dependency>
       <artifactId>slf4j-simple</artifactId>
@@ -75,7 +78,9 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
+        <version>3.1.0</version>
         <configuration>
           <archive>
             <index>true</index>
@@ -88,33 +93,53 @@
             </manifestEntries>
           </archive>
         </configuration>
-        <groupId>org.apache.maven.plugins</groupId>
-        <version>3.1.0</version>
       </plugin>
 
       <plugin>
+        <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-maven-plugin</artifactId>
+        <version>9.4.15.v20190215</version>
         <configuration>
           <scanIntervalSeconds>-1</scanIntervalSeconds>
-          <!-- Use test scope because the UI/test classes are in
+          <!-- Use test scope because the UI/demo classes are in
               the test package. -->
+          <useTestScope>true</useTestScope>
           <supportedPackagings>
             <supportedPackaging>jar</supportedPackaging>
           </supportedPackagings>
-          <useTestScope>true</useTestScope>
+          <stopKey>${project.artifactId}</stopKey>
+          <stopPort>8081</stopPort>
         </configuration>
-        <groupId>org.eclipse.jetty</groupId>
-        <version>9.4.14.v20181114</version>
+      </plugin>
+
+      <plugin>
+        <groupId>com.vaadin</groupId>
+        <artifactId>vaadin-maven-plugin</artifactId>
+        <version>${vaadin.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-frontend</goal>
+              <goal>build-frontend</goal>
+            </goals>
+            <configuration>
+              <convertHtml>false</convertHtml>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
 
   <profiles>
     <profile>
+      <id>directory</id>
       <build>
         <plugins>
           <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-assembly-plugin</artifactId>
+            <version>3.1.0</version>
             <configuration>
               <appendAssemblyId>false</appendAssemblyId>
               <descriptors>
@@ -129,44 +154,41 @@
                 <phase>install</phase>
               </execution>
             </executions>
-            <groupId>org.apache.maven.plugins</groupId>
-            <version>3.1.0</version>
           </plugin>
           <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-source-plugin</artifactId>
+            <version>3.0.1</version>
             <executions>
               <execution>
+                <id>attach-sources</id>
+                <phase>verify</phase>
                 <goals>
                   <goal>jar-no-fork</goal>
                 </goals>
-                <id>attach-sources</id>
-                <phase>verify</phase>
               </execution>
             </executions>
-            <groupId>org.apache.maven.plugins</groupId>
-            <version>3.0.1</version>
           </plugin>
           <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-javadoc-plugin</artifactId>
-            <configuration>
-              <additionalparam>-Xdoclint:none</additionalparam>
-              <quiet>true</quiet>
-            </configuration>
+            <version>3.0.1</version>
             <executions>
               <execution>
+                <id>attach-javadocs</id>
+                <phase>verify</phase>
                 <goals>
                   <goal>jar</goal>
                 </goals>
-                <id>attach-javadocs</id>
-                <phase>verify</phase>
               </execution>
             </executions>
-            <groupId>org.apache.maven.plugins</groupId>
-            <version>3.0.1</version>
+            <configuration>
+              <quiet>true</quiet>
+              <additionalparam>-Xdoclint:none</additionalparam>
+            </configuration>
           </plugin>
         </plugins>
       </build>
-      <id>directory</id>
     </profile>
   </profiles>
 </project>
