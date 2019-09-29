@@ -5,7 +5,7 @@ import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.dependency.NpmPackage;
 
 @Tag("color-picker")
-@NpmPackage(value = "@appreciated/color-picker", version = "2.0.0-beta.1")
+@NpmPackage(value = "@appreciated/color-picker", version = "2.0.0-beta.4")
 @JsModule("@appreciated/color-picker/color-picker.js")
 public class ColorPickerRaw extends AbstractSinglePropertyField<ColorPickerRaw, String>
         implements ColorPickerBaseRaw, HasStyle, Focusable<ColorPickerRaw>, HasTheme, HasSize {
