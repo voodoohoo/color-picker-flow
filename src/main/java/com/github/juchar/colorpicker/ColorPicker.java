@@ -7,8 +7,8 @@ import com.vaadin.flow.component.dependency.NpmPackage;
 import java.awt.*;
 
 @Tag("color-picker")
-@NpmPackage(value = "@appreciated/color-picker", version = "2.0.0-beta.4")
-@JsModule("@appreciated/color-picker/color-picker.js")
+@NpmPackage(value = "@ion-erik/color-picker", version = "2.0.0")
+@JsModule("@ion-erik/color-picker/color-picker.js")
 public class ColorPicker extends AbstractSinglePropertyField<ColorPicker, Color>
         implements ColorPickerBaseColor, HasStyle, Focusable<ColorPicker>, HasTheme, HasSize {
 

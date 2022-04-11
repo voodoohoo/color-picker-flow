@@ -2,6 +2,8 @@
 
 # ColorPicker component for Vaadin Flow
 
+Migrated to Vaadin23 (use vaadin-button-styles.js instead of vaadin-button.js)
+
 This project is the Component wrapper implementation of [`<color-picker>`](https://github.com/Juchar/color-picker) element
 for use from the server side with [Vaadin Flow](https://github.com/vaadin/flow).
 
